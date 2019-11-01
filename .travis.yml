@@ -3,5 +3,6 @@ node_js:
   - "12"
 
 script:
+  - npm install
   - npm run lint
   - npm start
