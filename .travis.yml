@@ -2,7 +2,9 @@ language: node_js
 node_js:
   - "12"
 
-script:
+install:
   - npm install
+
+script:
   - npm run lint
   - npm start
