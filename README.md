@@ -19,6 +19,6 @@ npm run lint
 
 ### 🐋 Dockerfile usage
 ```
-docker build -f dockerfile pnan:dev .
+docker build -f ./dockerfile -t pnan:dev .
 docker run -it -p 3000:3000 --rm pnan:dev
 ```
