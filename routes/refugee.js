@@ -10,6 +10,15 @@ router.get('/', function(req, res) {
     res.json(err);
   });
 });
+
+router.get('/:id', function(req, res) {
+  db.Refugee.findOne({where: {id: req.params.id}}).then(function (results) {
+    res.json(results);
+  }).catch( function(err){
+    res.json(err);
+  });
+});
+
 router.post('/', function(req, res) {
   const data = req.body;
   db.Refugee.create({
@@ -26,4 +35,5 @@ router.post('/', function(req, res) {
     res.json(err);
   })
 });
+
 module.exports = router;
