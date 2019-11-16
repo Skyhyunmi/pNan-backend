@@ -10,6 +10,7 @@ This instructions will get you a copy of the project up and running on your loca
 ### 🔨 Project setup
 
 1. install dependency with `npm install`
+1. Add your Database information to `.env` like `.env.sample`
 1. run server with `npm start`
 
 ### 📝 Check Lints
