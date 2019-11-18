@@ -22,13 +22,11 @@ router.get('/:id', function(req, res) {
 router.post('/', function(req, res) {
     const data = req.body;
     db.VisitLog.create({
-        name: data['name'],
-        birth: new Date(),
-        nationality: data['nationality'],
-        status: data['status'],
         createdAt: new Date(),
         updatedAt: null,
-        deletedAt: null
+        deletedAt: null,
+        refugee_id: data['refugee_id'],
+        support: data['support']
     }).then(function (results) {
         res.json(results);
     }).catch(function (err) {
