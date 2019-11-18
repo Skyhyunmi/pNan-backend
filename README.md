@@ -1,4 +1,4 @@
-# Ajou-pNan-backend
+# pNan-backend
 [![Build Status](https://travis-ci.com/Skyhyunmi/pNan-backend.svg?token=cJp4ZrbSHxsQMoD64kwe&branch=master)](https://travis-ci.com/Skyhyunmi/pNan-backend)
 
 피난처 backend 서버 저장소입니다.
