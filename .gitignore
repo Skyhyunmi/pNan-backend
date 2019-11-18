@@ -185,4 +185,10 @@ fabric.properties
 
 # End of https://www.gitignore.io/api/node,webstorm
 
+# package-lock
 package-lock.json
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
