@@ -40,7 +40,7 @@ router.post('/', function(req, res) {
 });
 
 router.put('/:id', function(req, res) {
-  // 400 handling 필요, where 결과 없을 시 404 필요
+  // where 결과 없을 시 404 필요
   const data = req.body;
   db.Refugee.update({
     name: data['name'],
