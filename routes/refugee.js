@@ -44,13 +44,12 @@ router.put('/:id', function(req, res) {
   const data = req.body;
   db.Refugee.update({
     name: data['name'],
-    birth: new Date(),
+    birth: data['birth'],
     nationality: data['nationality'],
     status: data['status'],
     updatedAt: new Date()
   },{where: {id: req.params.id}, returning: true})
       .then(function (results) {
-        console.log(results)
         res.json(results);
       }).catch(function (err) {
         res.json(err);
