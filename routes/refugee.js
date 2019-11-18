@@ -23,7 +23,7 @@ router.post('/', function(req, res) {
   const data = req.body;
   db.Refugee.create({
     name: data['name'],
-    birth: new Date(),
+    birth: data['birth'],
     nationality: data['nationality'],
     status: data['status'],
     createdAt: new Date(),
@@ -33,7 +33,7 @@ router.post('/', function(req, res) {
     res.json(results);
   }).catch(function (err) {
     res.json(err);
-  })
+  });
 });
 
 module.exports = router;
