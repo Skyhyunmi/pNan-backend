@@ -17,4 +17,9 @@ fs.readdirSync(__dirname)
     const model = sequelize.import(path.join(__dirname, file));
     db[model.name] = model;
   });
+
+db.Refugee.hasMany(db.VisitLog, { foreignKey: 'id' });
+db.VisitLog.belongsTo(db.Refugee, { foreignKey: 'refugee_id' });
+
+db.Operator = Sequelize.Op;
 module.exports = db;
