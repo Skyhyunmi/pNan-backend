@@ -6,6 +6,11 @@ var logger = require('morgan');
 
 var refugeeRouter = require('./routes/refugee');
 var visitLogRouter = require('./routes/visitLog');
+var userLogRouter = require('./routes/users');
+///////////////////////////////////////////////////////
+var session = require('express-session'); // 세션 설정
+var passport = require('passport'); // 여기와
+///////////////////////////////////////////////////////
 
 var app = express();
 
@@ -18,9 +23,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ secret: 'ThisIspNanSecretCode', resave: true, saveUninitialized: false })); // 세션 활성화
+app.use(passport.initialize()); // passport 구동
+app.use(passport.session()); // 세션 연결
 
 app.use('/api/v1/refugee', refugeeRouter);
 app.use('/api/v1/visitlog', visitLogRouter);
+app.use('/api/v1', userLogRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
