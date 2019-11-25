@@ -22,7 +22,6 @@ router.get('/:id', function(req, res) {
     else res.json(results);
   }).catch( function(err){
     res.status(404).send();
-    // res.json(err);
   });
 });
 
