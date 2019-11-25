@@ -30,11 +30,14 @@ app.use(session({ secret: 'ThisIspNanSecretCode', resave: true, saveUninitialize
 app.use(passport.initialize()); // passport 구동
 app.use(passport.session()); // 세션 연결
 passportConfig();
-
-app.use('/api/v1/refugee', refugeeRouter);
-app.use('/api/v1/visitlog', visitLogRouter);
+app.use((req,res,next)=> {
+  res.header('Access-Control-Allow-Headers', 'content-type, x-access-token');
+  next();
+})
+app.use('/api/v1/refugee',refugeeRouter);
+app.use('/api/v1/visitlog',visitLogRouter);
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/user', passport.authenticate('jwt', {session: false}), userRouter);
+app.use('/api/v1/user', userRouter);
 
 
 

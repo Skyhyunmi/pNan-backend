@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
+const util = require('../config/util')
 
 /* GET home page. */
-router.get('/', function(req, res) {
+router.get('/', util.isLoggedin,function(req, res) {
   //결과 없을 시 404 필요
   db.Refugee.findAll().then(function (results) {
     //console.log(results);
@@ -15,7 +16,7 @@ router.get('/', function(req, res) {
   });
 });
 
-router.get('/:id', function(req, res) {
+router.get('/:id', util.isLoggedin,function(req, res) {
   //결과 없을 시 404 필요
   db.Refugee.findOne({where: {id: req.params.id}}).then(function (results) {
     if(results==null) res.status(404).send();
@@ -25,7 +26,7 @@ router.get('/:id', function(req, res) {
   });
 });
 
-router.post('/', function(req, res) {
+router.post('/', util.isLoggedin,function(req, res) {
   // 400 handling 필요
   const data = req.body;
   db.Refugee.create({
@@ -44,7 +45,7 @@ router.post('/', function(req, res) {
   });
 });
 
-router.put('/:id', function(req, res) {
+router.put('/:id', util.isLoggedin,function(req, res) {
   // where 결과 없을 시 404 필요
   const data = req.body;
   db.Refugee.update({
@@ -64,7 +65,7 @@ router.put('/:id', function(req, res) {
       });
 });
 
-router.delete('/:id', function (req, res) {
+router.delete('/:id', util.isLoggedin,function (req, res) {
   // where 결과 없을 시 404 필요
   db.Refugee.destroy({where: {id: req.params.id}})
       .then(function(result) {

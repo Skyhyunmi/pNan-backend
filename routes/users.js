@@ -6,7 +6,7 @@ const db = require('../models/index');
 const jwt = require('jsonwebtoken');
 const util = require('../config/util')
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', util.isLoggedin,function(req, res, next) {
   res.send('respond with a resource');
 });
 
