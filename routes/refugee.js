@@ -10,7 +10,7 @@ router.get('/', util.isLoggedin,function(req, res) {
     //console.log(results);
     if(results.length==0) res.status(404).send();
     else res.json(results);
-  }).catch( function(err){
+  }).catch( function(){
     res.status(404).send();
     // res.json(err);
   });
@@ -21,7 +21,7 @@ router.get('/:id', util.isLoggedin,function(req, res) {
   db.Refugee.findOne({where: {id: req.params.id}}).then(function (results) {
     if(results==null) res.status(404).send();
     else res.json(results);
-  }).catch( function(err){
+  }).catch( function(){
     res.status(404).send();
   });
 });
@@ -39,7 +39,7 @@ router.post('/', util.isLoggedin,function(req, res) {
     deletedAt: null
   }).then(function (results) {
     res.json(results);
-  }).catch(function (err) {
+  }).catch(function () {
     res.status(404).send();
     //res.json(err);
   });
@@ -59,7 +59,7 @@ router.put('/:id', util.isLoggedin,function(req, res) {
         //console.log(results[0]);
         if(results[0]===0) res.status(404).send();
         else res.json(results);
-      }).catch(function (err) {
+      }).catch(function () {
         res.status(404).send();
         //res.json(err);
       });
@@ -72,7 +72,7 @@ router.delete('/:id', util.isLoggedin,function (req, res) {
         //console.log(result);
         if(result===0) res.status(404).send();
         else res.json(result);
-      }).catch(function(err) {
+      }).catch(function() {
         res.status(404).send();
         //res.json(err);
       });

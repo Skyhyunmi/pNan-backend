@@ -42,10 +42,6 @@ module.exports = function(sequelize, DataTypes) {
       deletedAt: {
         type: DataTypes.DATE,
         allowNull: true
-      },
-      authToken: {
-        type: DataTypes.STRING(100),
-        allowNull: true
       }
     }, {
       tableName: 'User'

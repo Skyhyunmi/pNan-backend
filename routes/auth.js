@@ -24,7 +24,7 @@ router.post('/join', (req,res) => {
           updatedAt: null
         }).then(function (results) {
           res.json(results);
-        }).catch(function (err) {
+        }).catch(function () {
           res.status(404).send();
         });
       });
@@ -33,7 +33,7 @@ router.post('/join', (req,res) => {
   });
   //// id, email, passwd -> hash, name, salt, authToken
   router.post('/login', (req,res,next) => {
-    passport.authenticate('local',{session:false},(err,user,info) => {
+    passport.authenticate('local',{session:false},(err,user) => {
       if (err || !user) {
         return res.status(400).json({
             message: 'ID or PW is not valid',
@@ -42,7 +42,7 @@ router.post('/join', (req,res) => {
       }
       req.logIn(user,{session:false},(err) => {
         if(err) return res.send(err);
-        payload = {
+        let payload = {
           id:user.user_id,
           name:user.name
         };
@@ -58,7 +58,7 @@ router.post('/join', (req,res) => {
     res.redirect('/');
   });
 
-  router.get('/refresh',util.isLoggedin,function(req,res,next){
+  router.get('/refresh',util.isLoggedin,function(req,res){
     console.log(req.decoded);
     db.User.findAll({where:{user_id:req.decoded.id}}).then(function(result){
       
@@ -69,7 +69,7 @@ router.post('/join', (req,res) => {
             user   : result
         });
       }
-      payload = {
+      let payload = {
         id:result.user_id,
         name:result.name
       };
