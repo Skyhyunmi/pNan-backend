@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
-const util = require('../config/util')
+const util = require('../config/util');
 
 router.get('/', util.isLoggedin, function(req, res) {
   const params = req.query;
@@ -93,7 +93,7 @@ router.delete('/:id', util.isLoggedin, function (req, res) {
   db.VisitLog.destroy({ where: { id: req.params.id } })
     .then(function(result) {
       res.json(result);
-    }).catch(function(err) {
+    }).catch(function() {
       res.status(404).send();
     });
 });

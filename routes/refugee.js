@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
-const util = require('../config/util')
+const util = require('../config/util');
 
 router.get('/', util.isLoggedin, function(req, res) {
   const where = {};
@@ -46,14 +46,14 @@ router.get('/', util.isLoggedin, function(req, res) {
 
 router.get('/:id', util.isLoggedin, function(req, res) {
   db.Refugee.findOne({ where: { id: req.params.id } }).then(function (results) {
-    if(results==null) res.status(404).send();
+    if(results == null) res.status(404).send();
     res.json(results);
   }).catch(function() {
     res.status(404).send();
   });
 });
 
-router.post('/', util.isLoggedin,function(req, res) {
+router.post('/', util.isLoggedin, function(req, res) {
   const data = req.body;
   db.Refugee.create({
     name: data.name,
@@ -70,7 +70,7 @@ router.post('/', util.isLoggedin,function(req, res) {
   });
 });
 
-router.put('/:id', util.isLoggedin,function(req, res) {
+router.put('/:id', util.isLoggedin, function(req, res) {
   const data = req.body;
   db.Refugee.update({
     name: data.name,
@@ -80,17 +80,17 @@ router.put('/:id', util.isLoggedin,function(req, res) {
     updatedAt: new Date()
   }, { where: { id: req.params.id }, returning: true })
     .then(function (results) {
-      if(results[0]===0) res.status(404).send();
-        else res.json(results);
+      if(results[0] === 0) res.status(404).send();
+      else res.json(results);
     }).catch(function () {
       res.status(404).send();
     });
 });
 
-router.delete('/:id', util.isLoggedin,function (req, res) {
+router.delete('/:id', util.isLoggedin, function (req, res) {
   db.Refugee.destroy({ where: { id: req.params.id } })
     .then(function(result) {
-      if(result===0) res.status(404).send();
+      if(result === 0) res.status(404).send();
       else res.json(result);
     }).catch(function() {
       res.status(404).send();
