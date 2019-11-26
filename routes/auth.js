@@ -59,7 +59,6 @@ router.post('/join', (req,res) => {
   });
 
   router.get('/refresh',util.isLoggedin,function(req,res){
-    console.log(req.decoded);
     db.User.findAll({where:{user_id:req.decoded.id}}).then(function(result){
       
       if (!result) {
@@ -73,7 +72,7 @@ router.post('/join', (req,res) => {
         id:result.user_id,
         name:result.name
       };
-      const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn: 60*60*24});
+      const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn: 60*90});
       result.authToken = token;
       return res.json({token});
     })
