@@ -7,7 +7,7 @@ const db = require('../models/index');
 const util = require('../config/util')
 require('dotenv').config();
 
-router.post('/join', (req,res) => {
+router.post('/signup', (req,res) => {
     const data = req.body;
     crypyto.randomBytes(64,(err,buf) => {
       const salt = buf.toString('base64');
@@ -52,29 +52,26 @@ router.post('/join', (req,res) => {
       });
     })(req,res,next);
   });
-  
-  router.get('/logout', function (req, res) {
-    req.logout();
-    res.redirect('/');
-  });
 
-  router.get('/refresh',util.isLoggedin,function(req,res){
-    db.User.findAll({where:{user_id:req.decoded.id}}).then(function(result){
+  // 토큰 refresh
+  // router.get('/refresh',util.isLoggedin,function(req,res){
+  //   db.User.findAll({where:{user_id:req.decoded.id}}).then(function(result){
       
-      if (!result) {
+  //     if (!result) {
         
-        return res.status(400).json({
-            message: 'Can\'t refresh the token',
-            user   : result
-        });
-      }
-      let payload = {
-        id:result.user_id,
-        name:result.name
-      };
-      const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn: 60*90});
-      result.authToken = token;
-      return res.json({token});
-    })
-  })
+  //       return res.status(400).json({
+  //           message: 'Can\'t refresh the token',
+  //           user   : result
+  //       });
+  //     }
+  //     let payload = {
+  //       id:result.user_id,
+  //       name:result.name
+  //     };
+  //     const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn: 60*90});
+  //     result.authToken = token;
+  //     return res.json({token});
+  //   })
+  // });
+
 module.exports = router;

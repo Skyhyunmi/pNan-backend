@@ -52,4 +52,13 @@ util.isLoggedin = function(req,res,next){
   }
 };
 
+util.checkPermission = function(req,res,next){
+  db.User.findOne({id:req.params.id}, function(err,user){
+    if(err||!user) return res.json(util.successFalse(err));
+    else if(!req.decoded || user.id != req.decoded.id)
+      return res.json(util.successFalse(null,'You don\'t have permission'));
+    else next();
+  });
+}
+
 module.exports = util;
