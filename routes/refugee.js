@@ -3,37 +3,63 @@ const router = express.Router();
 const db = require('../models/index');
 const util = require('../config/util')
 
-/* GET home page. */
-router.get('/', util.isLoggedin,function(req, res) {
-  //결과 없을 시 404 필요
-  db.Refugee.findAll().then(function (results) {
-    //console.log(results);
-    if(results.length==0) res.status(404).send();
-    else res.json(results);
-  }).catch( function(){
+router.get('/', util.isLoggedin, function(req, res) {
+  const where = {};
+  const params = req.query;
+
+  if(params.id) {
+    where.id = params.id;
+  }
+  if(params.name) {
+    where.name = decodeURI(params.name);
+  }
+  if(params.nationality) {
+    where.nationality = decodeURI(params.nationality);
+  }
+  if(params.status) {
+    where.status = decodeURI(params.status);
+  }
+  if(params.st_date && params.ed_date) {
+    const stDate = new Date(params.st_date);
+    let edDate = new Date(params.ed_date);
+    edDate = new Date(edDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
+
+    where.createdAt = {
+      [db.Operator.between]: [stDate, edDate]
+    };
+  }
+  if(params.st_date && !params.ed_date) {
+    const stDate = new Date(params.st_date);
+    const oneDay = new Date(stDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
+
+    where.createdAt = {
+      [db.Operator.between]: [stDate, oneDay]
+    };
+  }
+
+  db.Refugee.findAll({ where: where }).then(function (results) {
+    res.json(results);
+  }).catch(function() {
     res.status(404).send();
-    // res.json(err);
   });
 });
 
-router.get('/:id', util.isLoggedin,function(req, res) {
-  //결과 없을 시 404 필요
-  db.Refugee.findOne({where: {id: req.params.id}}).then(function (results) {
+router.get('/:id', util.isLoggedin, function(req, res) {
+  db.Refugee.findOne({ where: { id: req.params.id } }).then(function (results) {
     if(results==null) res.status(404).send();
-    else res.json(results);
-  }).catch( function(){
+    res.json(results);
+  }).catch(function() {
     res.status(404).send();
   });
 });
 
 router.post('/', util.isLoggedin,function(req, res) {
-  // 400 handling 필요
   const data = req.body;
   db.Refugee.create({
-    name: data['name'],
-    birth: data['birth'],
-    nationality: data['nationality'],
-    status: data['status'],
+    name: data.name,
+    birth: data.birth,
+    nationality: data.nationality,
+    status: data.status,
     createdAt: new Date(),
     updatedAt: null,
     deletedAt: null
@@ -41,41 +67,34 @@ router.post('/', util.isLoggedin,function(req, res) {
     res.json(results);
   }).catch(function () {
     res.status(404).send();
-    //res.json(err);
   });
 });
 
 router.put('/:id', util.isLoggedin,function(req, res) {
-  // where 결과 없을 시 404 필요
   const data = req.body;
   db.Refugee.update({
-    name: data['name'],
-    birth: data['birth'],
-    nationality: data['nationality'],
-    status: data['status'],
+    name: data.name,
+    birth: data.birth,
+    nationality: data.nationality,
+    status: data.status,
     updatedAt: new Date()
-  },{where: {id: req.params.id}, returning: true})
-      .then(function (results) {
-        //console.log(results[0]);
-        if(results[0]===0) res.status(404).send();
+  }, { where: { id: req.params.id }, returning: true })
+    .then(function (results) {
+      if(results[0]===0) res.status(404).send();
         else res.json(results);
-      }).catch(function () {
-        res.status(404).send();
-        //res.json(err);
-      });
+    }).catch(function () {
+      res.status(404).send();
+    });
 });
 
 router.delete('/:id', util.isLoggedin,function (req, res) {
-  // where 결과 없을 시 404 필요
-  db.Refugee.destroy({where: {id: req.params.id}})
-      .then(function(result) {
-        //console.log(result);
-        if(result===0) res.status(404).send();
-        else res.json(result);
-      }).catch(function() {
-        res.status(404).send();
-        //res.json(err);
-      });
+  db.Refugee.destroy({ where: { id: req.params.id } })
+    .then(function(result) {
+      if(result===0) res.status(404).send();
+      else res.json(result);
+    }).catch(function() {
+      res.status(404).send();
+    });
 });
 
 module.exports = router;
