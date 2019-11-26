@@ -46,7 +46,7 @@ router.post('/join', (req,res) => {
           id:user.user_id,
           name:user.name
         };
-        const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn: 60*60*24});
+        const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn: 60*90});
         user.authToken = token;
         return res.json({token});
       });
@@ -69,7 +69,6 @@ router.post('/join', (req,res) => {
             user   : result
         });
       }
-      console.log("3")
       payload = {
         id:result.user_id,
         name:result.name
