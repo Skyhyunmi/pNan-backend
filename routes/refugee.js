@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
+const util = require('../config/util');
 
-/* GET home page. */
-router.get('/', function(req, res) {
+router.get('/', util.isLoggedin, function(req, res) {
   const where = {};
   const params = req.query;
 
@@ -39,22 +39,21 @@ router.get('/', function(req, res) {
 
   db.Refugee.findAll({ where: where }).then(function (results) {
     res.json(results);
-  }).catch(function(err) {
-    res.json(err);
+  }).catch(function() {
+    res.status(404).send();
   });
 });
 
-router.get('/:id', function(req, res) {
-  // 결과 없을 시 404 필요
+router.get('/:id', util.isLoggedin, function(req, res) {
   db.Refugee.findOne({ where: { id: req.params.id } }).then(function (results) {
+    if(results == null) res.status(404).send();
     res.json(results);
-  }).catch(function(err) {
-    res.json(err);
+  }).catch(function() {
+    res.status(404).send();
   });
 });
 
-router.post('/', function(req, res) {
-  // 400 handling 필요
+router.post('/', util.isLoggedin, function(req, res) {
   const data = req.body;
   db.Refugee.create({
     name: data.name,
@@ -66,13 +65,12 @@ router.post('/', function(req, res) {
     deletedAt: null
   }).then(function (results) {
     res.json(results);
-  }).catch(function (err) {
-    res.json(err);
+  }).catch(function () {
+    res.status(404).send();
   });
 });
 
-router.put('/:id', function(req, res) {
-  // where 결과 없을 시 404 필요
+router.put('/:id', util.isLoggedin, function(req, res) {
   const data = req.body;
   db.Refugee.update({
     name: data.name,
@@ -82,19 +80,20 @@ router.put('/:id', function(req, res) {
     updatedAt: new Date()
   }, { where: { id: req.params.id }, returning: true })
     .then(function (results) {
-      res.json(results);
-    }).catch(function (err) {
-      res.json(err);
+      if(results[0] === 0) res.status(404).send();
+      else res.json(results);
+    }).catch(function () {
+      res.status(404).send();
     });
 });
 
-router.delete('/:id', function (req, res) {
-  // where 결과 없을 시 404 필요
+router.delete('/:id', util.isLoggedin, function (req, res) {
   db.Refugee.destroy({ where: { id: req.params.id } })
     .then(function(result) {
-      res.json(result);
-    }).catch(function(err) {
-      res.json(err);
+      if(result === 0) res.status(404).send();
+      else res.json(result);
+    }).catch(function() {
+      res.status(404).send();
     });
 });
 

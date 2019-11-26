@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
+const util = require('../config/util');
 
-/* GET home page. */
-router.get('/', function(req, res) {
+router.get('/', util.isLoggedin, function(req, res) {
   const params = req.query;
 
   const where = {};
@@ -52,15 +52,15 @@ router.get('/', function(req, res) {
   });
 });
 
-router.get('/:id', function(req, res) {
+router.get('/:id', util.isLoggedin, function(req, res) {
   db.VisitLog.findOne({ where: { id: req.params.id } }).then(function (results) {
     res.json(results);
-  }).catch(function(err) {
-    res.json(err);
+  }).catch(function() {
+    res.status(404).send();
   });
 });
 
-router.post('/', function(req, res) {
+router.post('/', util.isLoggedin, function(req, res) {
   const data = req.body;
   db.VisitLog.create({
     createdAt: new Date(),
@@ -75,8 +75,7 @@ router.post('/', function(req, res) {
   });
 });
 
-router.put('/:id', function(req, res) {
-  // 400 handling 필요, where 결과 없을 시 404 필요
+router.put('/:id', util.isLoggedin, function(req, res) {
   const data = req.body;
   db.VisitLog.update({
     support: data.support,
@@ -85,18 +84,17 @@ router.put('/:id', function(req, res) {
   }, { where: { id: req.params.id }, returning: true })
     .then(function (results) {
       res.json(results);
-    }).catch(function (err) {
-      res.json(err);
+    }).catch(function () {
+      res.status(404).send();
     });
 });
 
-router.delete('/:id', function (req, res) {
-  // where 결과 없을 시 404 필요
+router.delete('/:id', util.isLoggedin, function (req, res) {
   db.VisitLog.destroy({ where: { id: req.params.id } })
     .then(function(result) {
       res.json(result);
-    }).catch(function(err) {
-      res.json(err);
+    }).catch(function() {
+      res.status(404).send();
     });
 });
 
