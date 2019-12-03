@@ -19,6 +19,15 @@ router.get('/', util.isLoggedin, function(req, res) {
   if(params.status) {
     where.status = decodeURI(params.status);
   }
+  if(params.sex) {
+    where.status = decodeURI(params.status);
+  }
+  if(params.torture) {
+    where.status = decodeURI(params.status);
+  }
+  if(params.reason) {
+    where.status = decodeURI(params.status);
+  }
   if(params.st_date && params.ed_date) {
     const stDate = new Date(params.st_date);
     let edDate = new Date(params.ed_date);
@@ -60,6 +69,10 @@ router.post('/', util.isLoggedin, function(req, res) {
     birth: data.birth,
     nationality: data.nationality,
     status: data.status,
+    sex: data.sex,
+    torture: data.torture,
+    reason: data.reason,
+    memo: data.memo,
     createdAt: new Date(),
     updatedAt: null,
     deletedAt: null

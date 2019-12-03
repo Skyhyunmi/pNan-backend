@@ -35,6 +35,22 @@ module.exports = function(sequelize, DataTypes) {
     status: {
       type: DataTypes.STRING(45),
       allowNull: false
+    },
+    reason: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
+    torture: {
+      type: DataTypes.INTEGER(4),
+      allowNull: true
+    },
+    memo: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    sex: {
+      type: DataTypes.STRING(45),
+      allowNull: true
     }
   }, {
     tableName: 'Refugee'

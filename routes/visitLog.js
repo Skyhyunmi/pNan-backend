@@ -27,6 +27,10 @@ router.get('/', util.isLoggedin, function(req, res) {
     where.support = decodeURI(params.support);
   }
 
+  if(params.support_detail) {
+    where.support_detail = decodeURI(params.support_detail);
+  }
+
   if(params.st_date && params.ed_date) {
     const stDate = new Date(params.st_date);
     let edDate = new Date(params.ed_date);
@@ -67,7 +71,8 @@ router.post('/', util.isLoggedin, function(req, res) {
     updatedAt: null,
     deletedAt: null,
     refugee_id: data.refugee_id,
-    support: data.support
+    support: data.support,
+    support_detail: data.support_detail
   }).then(function (results) {
     res.json(results);
   }).catch(function (err) {
