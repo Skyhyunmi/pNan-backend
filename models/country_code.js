@@ -13,23 +13,7 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: false,
         primaryKey: true,
         unique: true
-      },
-      itu: {
-        type: DataTypes.STRING(5),
-        unique: true
-      },
-      iso: {
-        type: DataTypes.STRING(5),
-        unique: true
-      },
-      ioc: {
-        type: DataTypes.STRING(5),
-        unique: true
-      },
-      it: {
-        type: DataTypes.STRING(5),
-        unique: true
-      },
+      }
     }, {
       tableName: 'Country_Code'
     });
