@@ -31,6 +31,10 @@ module.exports = function(sequelize, DataTypes) {
     support: {
       type: DataTypes.STRING(45),
       allowNull: false
+    },
+    support_detail: {
+      type: DataTypes.STRING(45),
+      allowNull: true
     }
   }, {
     tableName: 'VisitLog'

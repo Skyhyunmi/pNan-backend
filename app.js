@@ -10,11 +10,9 @@ var userRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var statRouter = require('./routes/statistic');
 
-///////////////////////////////////////////////////////
 var session = require('express-session'); // 세션 설정
 var passport = require('passport'); // 여기와
-var passportConfig = require('./config/passport')
-///////////////////////////////////////////////////////
+var passportConfig = require('./config/passport');
 
 var app = express();
 
@@ -25,16 +23,18 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize()); // passport 구동
 passportConfig();
-app.use((req,res,next)=> {
-  res.header("Access-Control-Allow-Origin", "*");
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'content-type, x-access-token');
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
   next();
-})
-app.use('/api/v1/refugee',refugeeRouter);
-app.use('/api/v1/visitlog',visitLogRouter);
+});
+app.use('/api/v1/refugee', refugeeRouter);
+app.use('/api/v1/visitlog', visitLogRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/stat', statRouter);
+app.use(cors());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
