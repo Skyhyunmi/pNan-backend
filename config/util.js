@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+const db = require('../models/index');
 
 var util = {};
 

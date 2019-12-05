@@ -93,7 +93,7 @@ router.delete('/:id', util.isLoggedin, util.isAdmin, function(req, res) {
     else db.User.destroy({ where: { user_id: req.params.id } })
     .then(function(result) {
       if(result === 0) res.status(404).send();
-      else res.json(result);
+      else res.json(util.successTrue(null));
     }).catch(function() {
       res.status(404).send();
     });
