@@ -5,24 +5,22 @@ module.exports = function(sequelize, DataTypes) {
     name_eng: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      primaryKey: true,
-      unique: true
+      primaryKey: true
     },
     name_kor: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      primaryKey: true,
-      unique: true
+      primaryKey: true
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false
     }
   }, {
     tableName: 'Country_Code'
   });
 };
-
-/*
-    User Id,
-    Password
-    e-mail
-    name
-
-    */

@@ -41,6 +41,11 @@ module.exports = function(sequelize, DataTypes) {
     deletedAt: {
       type: DataTypes.DATE,
       allowNull: true
+    },
+    admin: {
+      type: DataTypes.INTEGER(4),
+      allowNull: false,
+      defaultValue: '0'
     }
   }, {
     tableName: 'User'
