@@ -98,7 +98,7 @@ router.put('/:id', util.isLoggedin, function(req, res) {
     torture: data.torture,
     reason: data.reason,
     memo: data.memo,
-    updatedAt: new Date(),
+    updatedAt: new Date()
   }, { where: { id: req.params.id }, returning: true })
     .then(function (results) {
       if(results[0] === 0) res.status(404).send();
