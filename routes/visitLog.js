@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../models/index');
 const util = require('../config/util');
 
-router.get('/', util.isLoggedin, function(req, res) {
+router.get('/', util.isLoggedin, function (req, res) {
   const params = req.query;
 
   const where = {};
@@ -11,27 +11,27 @@ router.get('/', util.isLoggedin, function(req, res) {
     model: db.Refugee
   }];
 
-  if(params.refugee_id) {
+  if (params.refugee_id) {
     where.refugee_id = params.refugee_id;
   }
 
-  if(params.nationality) {
+  if (params.nationality) {
     include[0].where = { nationality: decodeURI(params.nationality) };
   }
 
-  if(params.name) {
+  if (params.name) {
     include[0].where = { name: decodeURI(params.name) };
   }
 
-  if(params.support) {
+  if (params.support) {
     where.support = decodeURI(params.support);
   }
 
-  if(params.support_detail) {
+  if (params.support_detail) {
     where.support_detail = decodeURI(params.support_detail);
   }
 
-  if(params.st_date && params.ed_date) {
+  if (params.st_date && params.ed_date) {
     const stDate = new Date(params.st_date);
     let edDate = new Date(params.ed_date);
     edDate = new Date(edDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
@@ -41,7 +41,7 @@ router.get('/', util.isLoggedin, function(req, res) {
     };
   }
 
-  if(params.st_date && !params.ed_date) {
+  if (params.st_date && !params.ed_date) {
     const stDate = new Date(params.st_date);
     const oneDay = new Date(stDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
 
@@ -49,22 +49,26 @@ router.get('/', util.isLoggedin, function(req, res) {
       [db.Operator.between]: [stDate, oneDay]
     };
   }
-  db.VisitLog.findAll({ where: where, include: include }).then(function (results) {
+  db.VisitLog.findAll({
+    where: where, include: include
+  }).then(function (results) {
     res.json(results);
-  }).catch(function(err) {
-    res.json(err);
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
   });
 });
 
-router.get('/:id', util.isLoggedin, function(req, res) {
-  db.VisitLog.findOne({ where: { id: req.params.id } }).then(function (results) {
+router.get('/:id', util.isLoggedin, function (req, res) {
+  db.VisitLog.findOne({
+    where: { id: req.params.id }
+  }).then(function (results) {
     res.json(results);
-  }).catch(function() {
-    res.status(404).send();
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
   });
 });
 
-router.post('/', util.isLoggedin, function(req, res) {
+router.post('/', util.isLoggedin, function (req, res) {
   const data = req.body;
   db.VisitLog.create({
     createdAt: new Date(),
@@ -73,35 +77,36 @@ router.post('/', util.isLoggedin, function(req, res) {
     refugee_id: data.refugee_id,
     support: data.support,
     support_detail: data.support_detail
-  }).then(function (results) {
-    res.json(results);
+  }).then(function (result) {
+    res.json(result);
   }).catch(function (err) {
-    res.json(err);
+    res.status(404).json(util.successFalse(err));
   });
 });
 
-router.put('/:id', util.isLoggedin, function(req, res) {
+router.put('/:id', util.isLoggedin, function (req, res) {
   const data = req.body;
   db.VisitLog.update({
     support: data.support,
-    support_detail: data.support_detail,
     refugee_id: data.refugee_id,
     updatedAt: new Date()
-  }, { where: { id: req.params.id }, returning: true })
-    .then(function (results) {
-      res.json(results);
-    }).catch(function () {
-      res.status(404).send();
-    });
+  }, {
+    where: { id: req.params.id }, returning: true
+  }).then(function (result) {
+    res.json(result);
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
+  });
 });
 
-router.delete('/:id', util.isLoggedin, function (req, res) {
-  db.VisitLog.destroy({ where: { id: req.params.id } })
-    .then(function(result) {
-      res.json(result);
-    }).catch(function() {
-      res.status(404).send();
-    });
+router.delete('/:id', util.isLoggedin, util.isAdmin, function (req, res) {
+  db.VisitLog.destroy({
+    where: { id: req.params.id }
+  }).then(function (result) {
+    res.json(result);
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
+  });
 });
 
 module.exports = router;

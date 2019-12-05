@@ -2,37 +2,33 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
 const util = require('../config/util');
-var moment = require('moment');
-require('moment-timezone');
 
-moment.tz.setDefault('Asia/Seoul');
-
-router.get('/', util.isLoggedin, function(req, res) {
+router.get('/', util.isLoggedin, function (req, res) {
   const where = {};
   const params = req.query;
 
-  if(params.id) {
+  if (params.id) {
     where.id = params.id;
   }
-  if(params.name) {
+  if (params.name) {
     where.name = decodeURI(params.name);
   }
-  if(params.nationality) {
+  if (params.nationality) {
     where.nationality = decodeURI(params.nationality);
   }
-  if(params.status) {
+  if (params.status) {
     where.status = decodeURI(params.status);
   }
-  if(params.sex) {
+  if (params.sex) {
     where.status = decodeURI(params.status);
   }
-  if(params.torture) {
+  if (params.torture) {
     where.status = decodeURI(params.status);
   }
-  if(params.reason) {
+  if (params.reason) {
     where.status = decodeURI(params.status);
   }
-  if(params.st_date && params.ed_date) {
+  if (params.st_date && params.ed_date) {
     const stDate = new Date(params.st_date);
     let edDate = new Date(params.ed_date);
     edDate = new Date(edDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
@@ -41,7 +37,7 @@ router.get('/', util.isLoggedin, function(req, res) {
       [db.Operator.between]: [stDate, edDate]
     };
   }
-  if(params.st_date && !params.ed_date) {
+  if (params.st_date && !params.ed_date) {
     const stDate = new Date(params.st_date);
     const oneDay = new Date(stDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
 
@@ -52,21 +48,23 @@ router.get('/', util.isLoggedin, function(req, res) {
 
   db.Refugee.findAll({ where: where }).then(function (results) {
     res.json(results);
-  }).catch(function() {
-    res.status(404).send();
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
   });
 });
 
-router.get('/:id', util.isLoggedin, function(req, res) {
-  db.Refugee.findOne({ where: { id: req.params.id } }).then(function (results) {
-    if(results == null) res.status(404).send();
-    res.json(results);
-  }).catch(function() {
-    res.status(404).send();
+router.get('/:id', util.isLoggedin, function (req, res) {
+  db.Refugee.findOne({
+    where: { id: req.params.id }
+  }).then(function (result) {
+    if (!result) res.status(404).json(util.successFalse(null, 'Not valid user id'));
+    else res.json(result);
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
   });
 });
 
-router.post('/', util.isLoggedin, function(req, res) {
+router.post('/', util.isLoggedin, function (req, res) {
   const data = req.body;
   db.Refugee.create({
     name: data.name,
@@ -80,42 +78,40 @@ router.post('/', util.isLoggedin, function(req, res) {
     createdAt: new Date(),
     updatedAt: null,
     deletedAt: null
-  }).then(function (results) {
-    res.json(results);
-  }).catch(function () {
-    res.status(404).send();
+  }).then(function (result) {
+    res.json(result);
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
   });
 });
 
-router.put('/:id', util.isLoggedin, function(req, res) {
+router.put('/:id', util.isLoggedin, function (req, res) {
   const data = req.body;
   db.Refugee.update({
     name: data.name,
     birth: data.birth,
     nationality: data.nationality,
     status: data.status,
-    sex: data.sex,
-    torture: data.torture,
-    reason: data.reason,
-    memo: data.memo,
     updatedAt: new Date()
-  }, { where: { id: req.params.id }, returning: true })
-    .then(function (results) {
-      if(results[0] === 0) res.status(404).send();
-      else res.json(results);
-    }).catch(function () {
-      res.status(404).send();
-    });
+  }, {
+    where: { id: req.params.id }, returning: true
+  }).then(function (result) {
+    if (!result[0]) res.status(404).json(util.successFalse(null, 'Not valid user id'));
+    else res.json(result);
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
+  });
 });
 
-router.delete('/:id', util.isLoggedin, function (req, res) {
-  db.Refugee.destroy({ where: { id: req.params.id } })
-    .then(function(result) {
-      if(result === 0) res.status(404).send();
-      else res.json(result);
-    }).catch(function() {
-      res.status(404).send();
-    });
+router.delete('/:id', util.isLoggedin, util.isAdmin, function (req, res) {
+  db.Refugee.destroy({
+    where: { id: req.params.id }
+  }).then(function (result) {
+    if (!result) res.status(404).json(util.successFalse(null, 'Not valid user id'));
+    else res.json(result);
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
+  });
 });
 
 module.exports = router;
