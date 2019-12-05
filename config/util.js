@@ -52,10 +52,17 @@ util.isLoggedin = function(req, res, next) {
   }
 };
 
-util.checkPermission = function(req, res, next) {
-  db.User.findOne({ id: req.params.id }, function(err, user) {
-    if(err || !user) return res.json(util.successFalse(err));
-    else if(!req.decoded || user.id !== req.decoded.id) { return res.json(util.successFalse(null, 'You don\'t have permission')); } else next();
+util.isAdmin = function(req, res, next) {
+  if(!req.decoded.admin) res.status(403).send();
+  db.User.findOne({where: { user_id: req.decoded.id, admin: 1 } })
+  .then((user) =>{
+    if(!user) res.status(403).send();
+    else if(!req.decoded || user.user_id !== req.decoded.id) {
+      res.json(util.successFalse(null, 'You don\'t have permission')); }
+    else next();
+  })
+  .catch(function() {
+    res.status(404).send();
   });
 };
 

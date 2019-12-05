@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const crypyto = require('crypto');
 const db = require('../models/index');
+const util = require('../config/util');
 
 require('dotenv').config();
 
@@ -26,8 +27,10 @@ router.post('/signup', (req, res) => {
         updatedAt: null
       }).then(function (results) {
         res.json(results);
-      }).catch(function () {
-        res.status(404).send();
+      }).catch(function (err) {
+        if(err.errors[0].path === "user_id")
+          res.status(404).json(util.successFalse(null, '아이디 중복'));
+        else res.status(404).json(util.successFalse(null, '이메일 중복'));
       });
     });
   });
@@ -45,11 +48,13 @@ router.post('/login', (req, res, next) => {
       if(err) return res.send(err);
       const payload = {
         id: user.user_id,
-        name: user.name
+        name: user.name,
+        admin: user.admin,
+        loggedAt: new Date()
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 90 });
       user.authToken = token;
-      return res.json({ token });
+      return res.json({ "token": token, "admin": user.admin });
     });
   })(req, res, next);
 });

@@ -2,10 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
 const util = require('../config/util');
-var moment = require('moment');
-require('moment-timezone');
-
-moment.tz.setDefault('Asia/Seoul');
 
 router.get('/', util.isLoggedin, function(req, res) {
   const where = {};
@@ -94,10 +90,6 @@ router.put('/:id', util.isLoggedin, function(req, res) {
     birth: data.birth,
     nationality: data.nationality,
     status: data.status,
-    sex: data.sex,
-    torture: data.torture,
-    reason: data.reason,
-    memo: data.memo,
     updatedAt: new Date()
   }, { where: { id: req.params.id }, returning: true })
     .then(function (results) {
@@ -108,7 +100,7 @@ router.put('/:id', util.isLoggedin, function(req, res) {
     });
 });
 
-router.delete('/:id', util.isLoggedin, function (req, res) {
+router.delete('/:id', util.isAdmin, util.isLoggedin, function (req, res) {
   db.Refugee.destroy({ where: { id: req.params.id } })
     .then(function(result) {
       if(result === 0) res.status(404).send();

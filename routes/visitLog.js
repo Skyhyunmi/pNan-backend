@@ -84,7 +84,6 @@ router.put('/:id', util.isLoggedin, function(req, res) {
   const data = req.body;
   db.VisitLog.update({
     support: data.support,
-    support_detail: data.support_detail,
     refugee_id: data.refugee_id,
     updatedAt: new Date()
   }, { where: { id: req.params.id }, returning: true })
@@ -95,7 +94,7 @@ router.put('/:id', util.isLoggedin, function(req, res) {
     });
 });
 
-router.delete('/:id', util.isLoggedin, function (req, res) {
+router.delete('/:id', util.isAdmin, util.isLoggedin, function (req, res) {
   db.VisitLog.destroy({ where: { id: req.params.id } })
     .then(function(result) {
       res.json(result);
