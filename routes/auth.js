@@ -74,7 +74,7 @@ router.get('/refresh', util.isLoggedin, function (req, res) {
     };
     user.authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 90 });
     return res.json({ token: user.authToken });
-  })
+  });
 });
 
 module.exports = router;
