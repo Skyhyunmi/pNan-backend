@@ -8,7 +8,7 @@ const util = require('../config/util');
 
 require('dotenv').config();
 
-router.post('/signup', function (req, res) {
+router.post('/signup', util.isLoggedin, util.isAdmin, function (req, res) {
   const data = req.body;
   // eslint-disable-next-line handle-callback-err
   crypyto.randomBytes(64, function (err, buf) {
@@ -73,7 +73,7 @@ router.get('/refresh', util.isLoggedin, function (req, res) {
       loggedAt: new Date()
     };
     user.authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 90 });
-    return res.json({ token: user.authToken });
+    res.json({ token: user.authToken });
   });
 });
 
