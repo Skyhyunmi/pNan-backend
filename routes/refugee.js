@@ -46,8 +46,10 @@ router.get('/', util.isLoggedin, function (req, res) {
     };
   }
 
-  db.Refugee.findAll({ where: where }).then(function (results) {
-    res.json(results);
+  db.Refugee.findAndCountAll({
+    where: where, offset: Number.parseInt(params.offset), limit: Number.parseInt(params.limit)
+  }).then(function (result) {
+    res.json(result);
   }).catch(function (err) {
     res.status(404).json(util.successFalse(err));
   });
