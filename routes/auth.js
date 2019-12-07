@@ -22,6 +22,7 @@ router.post('/signup', util.isLoggedin, util.isAdmin, function (req, res) {
         name: data.name,
         email: data.email,
         salt: salt,
+        admin: data.is_admin,
         hashed_password: hashedPw,
         createdAt: new Date(),
         updatedAt: null
@@ -29,9 +30,9 @@ router.post('/signup', util.isLoggedin, util.isAdmin, function (req, res) {
         res.json(results);
       }).catch(function (err) {
         if (err.errors[0].path === 'user_id') {
-          res.status(404).json(util.successFalse(null, '아이디 중복'));
+          res.status(404).json(util.successFalse(err, '아이디 중복'));
         } else {
-          res.status(404).json(util.successFalse(null, '이메일 중복'));
+          res.status(404).json(util.successFalse(err, '이메일 중복'));
         }
       });
     });
