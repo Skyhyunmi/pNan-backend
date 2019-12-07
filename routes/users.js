@@ -5,7 +5,18 @@ const crypyto = require('crypto');
 const util = require('../config/util');
 const db = require('../models/index');
 
-router.get('/:id', util.isLoggedin, function (req, res) {
+router.get('/', util.isLoggedin, function (req, res) {
+  db.User.findOne({
+    where: { user_id: req.decoded.id }
+  }).then(function (result) {
+    if (result) res.json(result);
+    else res.status(404).json(util.successFalse(null, 'Not valid user id'));
+  }).catch(function (err) {
+    res.status(404).json(util.successFalse(err));
+  });
+});
+
+router.get('/:id', util.isLoggedin, util.isAdmin, function (req, res) {
   db.User.findOne({
     where: { user_id: req.params.id }
   }).then(function (result) {
