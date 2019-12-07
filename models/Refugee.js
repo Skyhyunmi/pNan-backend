@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     name: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(200),
       allowNull: false
     },
     nationality: {
