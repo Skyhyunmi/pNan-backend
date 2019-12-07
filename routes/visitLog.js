@@ -7,6 +7,9 @@ router.get('/', util.isLoggedin, function (req, res) {
   const params = req.query;
 
   const where = {};
+  where.limit = 10;
+  where.offset = 0;
+
   const include = [{
     model: db.Refugee
   }];
@@ -31,6 +34,10 @@ router.get('/', util.isLoggedin, function (req, res) {
     where.support_detail = decodeURI(params.support_detail);
   }
 
+  if (params.offset) {
+    where.offset = Number.parseInt(params.offset);
+  }
+
   if (params.st_date && params.ed_date) {
     const stDate = new Date(params.st_date);
     let edDate = new Date(params.ed_date);
@@ -51,7 +58,8 @@ router.get('/', util.isLoggedin, function (req, res) {
   }
 
   db.VisitLog.findAndCountAll({
-    where: where, include: include, offset: Number.parseInt(params.offset), limit: Number.parseInt(params.limit)
+    where: where,
+    include: include
   }).then(function (result) {
     res.json(result);
   }).catch(function (err) {
