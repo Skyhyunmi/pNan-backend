@@ -2,44 +2,56 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
 const util = require('../config/util');
+require('moment-timezone');
+const moment = require('moment');
+
+moment.tz.setDefault('Asia/Seoul');
+
+function getDate(date) {
+  if (date) {
+    moment(date).format('YYYY-MM-DD HH:mm:ss');
+  } else {
+    return moment().format('YYYY-MM-DD HH:mm:ss');
+  }
+}
 
 router.get('/', util.isLoggedin, function (req, res) {
   const params = req.query;
 
-  const where = {};
-  let offset = 0;
-  const limit = 10;
-
+  const options = {
+    where: {}
+  };
   if (params.id) {
-    where.id = params.id;
+    options.where.id = params.id;
   }
   if (params.name) {
-    where.name = decodeURI(params.name);
+    options.where.name = decodeURI(params.name);
   }
   if (params.nationality) {
-    where.nationality = decodeURI(params.nationality);
+    options.where.nationality = decodeURI(params.nationality);
   }
   if (params.status) {
-    where.status = decodeURI(params.status);
+    options.where.status = decodeURI(params.status);
   }
   if (params.sex) {
-    where.status = decodeURI(params.status);
+    options.where.sex = decodeURI(params.sex);
   }
   if (params.torture) {
-    where.status = decodeURI(params.status);
+    options.where.torture = decodeURI(params.torture);
   }
   if (params.reason) {
-    where.status = decodeURI(params.status);
+    options.where.reason = decodeURI(params.reason);
   }
   if (params.offset) {
-    offset = Number.parseInt(params.offset);
+    options.offset = Number.parseInt(params.offset);
+    options.limit = 10;
   }
   if (params.st_date && params.ed_date) {
     const stDate = new Date(params.st_date);
     let edDate = new Date(params.ed_date);
     edDate = new Date(edDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
 
-    where.createdAt = {
+    options.where.createdAt = {
       [db.Operator.between]: [stDate, edDate]
     };
   }
@@ -47,16 +59,12 @@ router.get('/', util.isLoggedin, function (req, res) {
     const stDate = new Date(params.st_date);
     const oneDay = new Date(stDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
 
-    where.createdAt = {
+    options.where.createdAt = {
       [db.Operator.between]: [stDate, oneDay]
     };
   }
 
-  db.Refugee.findAndCountAll({
-    where: where,
-    offset: offset,
-    limit: limit
-  }).then(function (result) {
+  db.Refugee.findAndCountAll(options).then(function (result) {
     res.json(result);
   }).catch(function (err) {
     res.status(404).json(util.successFalse(err));
@@ -85,7 +93,7 @@ router.post('/', util.isLoggedin, function (req, res) {
     torture: data.torture,
     reason: data.reason,
     memo: data.memo,
-    createdAt: new Date(),
+    createdAt: getDate(),
     updatedAt: null,
     deletedAt: null
   }).then(function (result) {
@@ -109,16 +117,14 @@ router.put('/:id', util.isLoggedin, function (req, res) {
     reason: data.reason ? data.reason : refugee.reason,
     status: data.status ? data.status : refugee.nationality,
     memo: data.memo ? data.memo : refugee.memo,
-    updatedAt: new Date()
+    updatedAt: getDate()
   }, { where: { id: req.params.id }, returning: true }).then(function (result) {
-    console.log(result);
     if (!result[1]) {
       res.status(404).json(util.successFalse(null, 'Not valid user id'));
     } else {
       res.json(result);
     }
   }).catch(function (err) {
-    console.log(err);
     res.status(404).json(util.successFalse(err));
   });
 });

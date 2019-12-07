@@ -6,7 +6,13 @@ require('dotenv').config();
 const db = {};
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
   host: process.env.DB_HOST,
-  dialect: 'mysql'
+  dialect: 'mysql',
+  dialectOptions: {
+    charset: 'utf8mb4',
+    dateStrings: true,
+    typeCast: true
+  },
+  timezone: '+9:00'
 });
 fs.readdirSync(__dirname)
   .filter(function(file) {
