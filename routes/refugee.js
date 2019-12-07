@@ -7,8 +7,8 @@ router.get('/', util.isLoggedin, function (req, res) {
   const params = req.query;
 
   const where = {};
-  where.offset = 0;
-  where.limit = 10;
+  let offset = 0;
+  const limit = 10;
 
   if (params.id) {
     where.id = params.id;
@@ -32,7 +32,7 @@ router.get('/', util.isLoggedin, function (req, res) {
     where.status = decodeURI(params.status);
   }
   if (params.offset) {
-    where.offset = Number.parseInt(params.offset);
+    offset = Number.parseInt(params.offset);
   }
   if (params.st_date && params.ed_date) {
     const stDate = new Date(params.st_date);
@@ -53,7 +53,9 @@ router.get('/', util.isLoggedin, function (req, res) {
   }
 
   db.Refugee.findAndCountAll({
-    where: where
+    where: where,
+    offset: offset,
+    limit: limit
   }).then(function (result) {
     res.json(result);
   }).catch(function (err) {
