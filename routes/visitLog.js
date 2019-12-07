@@ -49,10 +49,11 @@ router.get('/', util.isLoggedin, function (req, res) {
       [db.Operator.between]: [stDate, oneDay]
     };
   }
-  db.VisitLog.findAll({
-    where: where, include: include
-  }).then(function (results) {
-    res.json(results);
+
+  db.VisitLog.findAndCountAll({
+    where: where, include: include, offset: Number.parseInt(params.offset), limit: Number.parseInt(params.limit)
+  }).then(function (result) {
+    res.json(result);
   }).catch(function (err) {
     res.status(404).json(util.successFalse(err));
   });
