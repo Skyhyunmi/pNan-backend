@@ -88,6 +88,7 @@ router.put('/:id', util.isLoggedin, function (req, res) {
   const data = req.body;
   db.VisitLog.update({
     support: data.support,
+    support_detail: data.support_detail,
     refugee_id: data.refugee_id,
     updatedAt: new Date()
   }, {

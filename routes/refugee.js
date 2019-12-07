@@ -87,18 +87,28 @@ router.post('/', util.isLoggedin, function (req, res) {
 
 router.put('/:id', util.isLoggedin, function (req, res) {
   const data = req.body;
+  const refugee = db.Refugee.findOne({
+    where: { id: req.params.id }
+  });
   db.Refugee.update({
-    name: data.name,
-    birth: data.birth,
-    nationality: data.nationality,
-    status: data.status,
+    name: data.name ? data.name : refugee.name,
+    birth: data.birth ? data.birth : refugee.birth,
+    nationality: data.nationality ? data.nationality : refugee.nationality,
+    sex: data.sex ? data.sex : refugee.sex,
+    torture: data.torture !== null ? data.torture : refugee.torture,
+    reason: data.reason ? data.reason : refugee.reason,
+    status: data.status ? data.status : refugee.nationality,
+    memo: data.memo ? data.memo : refugee.memo,
     updatedAt: new Date()
-  }, {
-    where: { id: req.params.id }, returning: true
-  }).then(function (result) {
-    if (!result[0]) res.status(404).json(util.successFalse(null, 'Not valid user id'));
-    else res.json(result);
+  }, { where: { id: req.params.id }, returning: true }).then(function (result) {
+    console.log(result);
+    if (!result[1]) {
+      res.status(404).json(util.successFalse(null, 'Not valid user id'));
+    } else {
+      res.json(result);
+    }
   }).catch(function (err) {
+    console.log(err);
     res.status(404).json(util.successFalse(err));
   });
 });
