@@ -19,8 +19,10 @@ router.get('/', util.isLoggedin, function (req, res) {
   const params = req.query;
 
   const options = {
-    where: {}
+    where: {},
+    order: [['updatedAt', 'DESC']]
   };
+
   if (params.id) {
     options.where.id = params.id;
   }
@@ -45,6 +47,9 @@ router.get('/', util.isLoggedin, function (req, res) {
   if (params.offset) {
     options.offset = Number.parseInt(params.offset);
     options.limit = 10;
+  }
+  if (params.criteria && params.order) {
+    options.order = [[params.criteria, params.order]];
   }
   if (params.st_date && params.ed_date) {
     const stDate = new Date(params.st_date);

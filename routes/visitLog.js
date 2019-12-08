@@ -9,7 +9,7 @@ router.get('/', util.isLoggedin, function (req, res) {
   const where = {};
   const limit = 10;
   let offset = 0;
-
+  let order = [['updatedAt', 'DESC']];
   const include = [{
     model: db.Refugee
   }];
@@ -57,11 +57,16 @@ router.get('/', util.isLoggedin, function (req, res) {
     };
   }
 
+  if (params.criteria && params.order) {
+    order = [[params.criteria, params.order]];
+  }
+
   db.VisitLog.findAndCountAll({
     where: where,
     offset: offset,
     limit: limit,
-    include: include
+    include: include,
+    order: order
   }).then(function (result) {
     res.json(result);
   }).catch(function (err) {
