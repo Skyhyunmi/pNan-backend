@@ -35,7 +35,7 @@ router.get('/', util.isLoggedin, function (req, res) {
   }
 
   if (params.offset) {
-    offset = Number.parseInt(params.offset);
+    offset = 10 * Number.parseInt(params.offset);
   }
 
   if (params.st_date && params.ed_date) {
