@@ -58,13 +58,13 @@ router.get('/', util.isLoggedin, function (req, res) {
   }
 
   if (params.criteria && params.order) {
-    if (params.criteria === 'updatedAt')
-      order = [[params.criteria, params.order]]
-    else if (params.criteria === 'name' || params.criteria === 'birth'
-      || params.criteria === 'nationality')
+    if (params.criteria === 'updatedAt') {
+      order = [[params.criteria, params.order]];
+    } else if (params.criteria === 'name' || params.criteria === 'birth' || params.criteria === 'nationality') {
       order = [[db.Refugee, params.criteria, params.order], ['updatedAt', 'DESC']];
-    else
+    } else {
       order = [[params.criteria, params.order], ['updatedAt', 'DESC']];
+    }
   }
 
   db.VisitLog.findAndCountAll({
