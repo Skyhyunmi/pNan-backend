@@ -19,8 +19,10 @@ router.get('/', util.isLoggedin, function (req, res) {
   const params = req.query;
 
   const options = {
-    where: {}
+    where: {},
+    order: [['updatedAt', 'DESC']]
   };
+
   if (params.id) {
     options.where.id = params.id;
   }
@@ -43,7 +45,7 @@ router.get('/', util.isLoggedin, function (req, res) {
     options.where.reason = decodeURI(params.reason);
   }
   if (params.offset) {
-    options.offset = Number.parseInt(params.offset);
+    options.offset = 10 * Number.parseInt(params.offset);
     options.limit = 10;
   }
   if (params.st_date && params.ed_date) {
@@ -63,7 +65,9 @@ router.get('/', util.isLoggedin, function (req, res) {
       [db.Operator.between]: [stDate, oneDay]
     };
   }
-
+  if (params.criteria && params.order) {
+    options.order = [[params.criteria, params.order]];
+  }
   db.Refugee.findAndCountAll(options).then(function (result) {
     res.json(result);
   }).catch(function (err) {

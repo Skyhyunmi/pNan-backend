@@ -12,7 +12,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     dateStrings: true,
     typeCast: true
   },
-  timezone: '+9:00'
+  timezone: '+09:00'
 });
 fs.readdirSync(__dirname)
   .filter(function(file) {
