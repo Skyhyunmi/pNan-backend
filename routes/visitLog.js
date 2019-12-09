@@ -9,7 +9,7 @@ router.get('/', util.isLoggedin, function (req, res) {
   const where = {};
   const limit = 10;
   let offset = 0;
-  let order = [['createdAt', 'DESC']];
+  let order = [['updatedAt', 'DESC']];
   const include = [{
     model: db.Refugee
   }];
@@ -58,13 +58,13 @@ router.get('/', util.isLoggedin, function (req, res) {
   }
 
   if (params.criteria && params.order) {
-    if (params.criteria === 'createdAt')
+    if (params.criteria === 'updatedAt')
       order = [[params.criteria, params.order]]
     else if (params.criteria === 'name' || params.criteria === 'birth'
       || params.criteria === 'nationality')
-      order = [[db.Refugee, params.criteria, params.order], ['createdAt', 'DESC']];
+      order = [[db.Refugee, params.criteria, params.order], ['updatedAt', 'DESC']];
     else
-      order = [[params.criteria, params.order], ['createdAt', 'DESC']];
+      order = [[params.criteria, params.order], ['updatedAt', 'DESC']];
   }
 
   db.VisitLog.findAndCountAll({
