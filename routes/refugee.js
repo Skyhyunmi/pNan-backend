@@ -119,7 +119,7 @@ router.put('/:id', util.isLoggedin, function (req, res) {
       sex: data.sex ? data.sex : refugee.sex,
       torture: data.torture !== null ? data.torture : refugee.torture,
       reason: data.reason ? data.reason : refugee.reason,
-      status: data.status ? data.status : refugee.nationality,
+      status: data.status ? data.status : refugee.status,
       memo: data.memo ? data.memo : refugee.memo,
       updatedAt: getDate()
     }, { where: { id: req.params.id }, returning: true }).then(function (result) {
