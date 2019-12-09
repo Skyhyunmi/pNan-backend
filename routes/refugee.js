@@ -45,7 +45,7 @@ router.get('/', util.isLoggedin, function (req, res) {
     options.where.reason = decodeURI(params.reason);
   }
   if (params.offset) {
-    options.offset = 10 * Number.parseInt(params.offset);
+    options.offset = Number.parseInt(params.offset);
     options.limit = 10;
   }
   if (params.st_date && params.ed_date) {
