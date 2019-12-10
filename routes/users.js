@@ -86,7 +86,7 @@ router.delete('/:id', util.isLoggedin, util.isAdmin, function (req, res) {
       res.json(util.successFalse(null, 'no such user or it is admin account'));
     } else {
       db.User.destroy({
-        where: { user_id: targetUser.id }
+        where: { id: targetUser.id }
       }).then(function (result) {
         if (result === 0) {
           res.status(404).json(util.successFalse(null, 'No User is deleted.'));
