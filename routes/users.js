@@ -51,7 +51,7 @@ router.put('/:id', util.isLoggedin, util.isAdmin, async function (req, res) {
       hashedPw = key.toString('base64');
     }
   } catch (err) {
-    res.status(500).json(util.successFalse(err));
+    return res.status(500).json(util.successFalse(err));
   }
   let result = null;
   try {
@@ -70,10 +70,10 @@ router.put('/:id', util.isLoggedin, util.isAdmin, async function (req, res) {
       returning: true
     });
     if (!result[1]) {
-      res.status(400).json(util.successFalse('no column effected'));
+      return res.status(400).json(util.successFalse('no column effected'));
     }
   } catch (err) {
-    res.status(500).json(util.successFalse(err));
+    return res.status(500).json(util.successFalse(err));
   }
   res.json(result);
 });
