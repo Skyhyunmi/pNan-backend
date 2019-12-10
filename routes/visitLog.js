@@ -6,36 +6,42 @@ const util = require('../config/util');
 router.get('/', util.isLoggedin, function (req, res) {
   const params = req.query;
 
+  const options = {
+    where: {},
+    include: [{
+      model: db.Refugee
+    }],
+    order: [['updatedAt', 'DESC']]
+  };
+
+
   const where = {};
   const limit = 10;
   let offset = 0;
-  let order = [['updatedAt', 'DESC']];
-  const include = [{
-    model: db.Refugee
-  }];
 
   if (params.refugee_id) {
-    where.refugee_id = params.refugee_id;
+    options.where.refugee_id = params.refugee_id;
   }
 
   if (params.nationality) {
-    include[0].where = { nationality: decodeURI(params.nationality) };
+    options.include[0].where = { nationality: decodeURI(params.nationality) };
   }
 
   if (params.name) {
-    include[0].where = { name: decodeURI(params.name) };
+    options.include[0].where = { name: decodeURI(params.name) };
   }
 
   if (params.support) {
-    where.support = decodeURI(params.support);
+    options.where.support = decodeURI(params.support);
   }
 
   if (params.support_detail) {
-    where.support_detail = decodeURI(params.support_detail);
+    options.where.support_detail = decodeURI(params.support_detail);
   }
 
   if (params.offset) {
-    offset = Number.parseInt(params.offset);
+    options.offset = Number.parseInt(params.offset);
+    options.limit = 10;
   }
 
   if (params.st_date && params.ed_date) {
@@ -43,7 +49,7 @@ router.get('/', util.isLoggedin, function (req, res) {
     let edDate = new Date(params.ed_date);
     edDate = new Date(edDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
 
-    where.createdAt = {
+    options.where.createdAt = {
       [db.Operator.between]: [stDate, edDate]
     };
   }
@@ -52,28 +58,22 @@ router.get('/', util.isLoggedin, function (req, res) {
     const stDate = new Date(params.st_date);
     const oneDay = new Date(stDate.getTime() + (1000 * 60 * 60 * 24) - 1000);
 
-    where.createdAt = {
+    options.where.createdAt = {
       [db.Operator.between]: [stDate, oneDay]
     };
   }
 
   if (params.criteria && params.order) {
     if (params.criteria === 'updatedAt') {
-      order = [[params.criteria, params.order]];
+      options.order = [[params.criteria, params.order]];
     } else if (params.criteria === 'name' || params.criteria === 'birth' || params.criteria === 'nationality') {
-      order = [[db.Refugee, params.criteria, params.order], ['updatedAt', 'DESC']];
+      options.order = [[db.Refugee, params.criteria, params.order], ['updatedAt', 'DESC']];
     } else {
-      order = [[params.criteria, params.order], ['updatedAt', 'DESC']];
+      options.order = [[params.criteria, params.order], ['updatedAt', 'DESC']];
     }
   }
 
-  db.VisitLog.findAndCountAll({
-    where: where,
-    offset: offset,
-    limit: limit,
-    include: include,
-    order: order
-  }).then(function (result) {
+  db.VisitLog.findAndCountAll(options).then(function (result) {
     res.json(result);
   }).catch(function (err) {
     res.status(404).json(util.successFalse(err));
