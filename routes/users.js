@@ -40,6 +40,7 @@ router.put('/:id', util.isLoggedin, function (req, res) {
           name: data.name,
           email: data.email,
           salt: salt,
+          admin: data.admin,
           hashed_password: hashedPw,
           updatedAt: new Date()
         }, {
@@ -70,6 +71,7 @@ router.put('/:id', util.isLoggedin, function (req, res) {
     db.User.update({
       name: data.name,
       email: data.email,
+      admin: data.admin,
       updatedAt: new Date()
     }, {
       where: { user_id: req.decoded.id }
