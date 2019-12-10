@@ -59,7 +59,7 @@ router.put('/:id', util.isLoggedin, util.isAdmin, async function (req, res) {
       user_id: data.user_id ? data.user_id : user.user_id,
       name: data.name ? data.name : user.name,
       email: data.email ? data.email : user.email,
-      admin: data.admin === undefined ? data.admin : user.admin,
+      admin: data.admin !== undefined ? data.admin : user.admin,
       hashed_password: data.new_pw ? hashedPw : user.hashed_password,
       salt: data.new_pw ? salt : user.salt,
       updatedAt: getDate()
