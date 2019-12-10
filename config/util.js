@@ -55,16 +55,17 @@ util.isLoggedin = function (req, res, next) {
 
 util.isAdmin = function (req, res, next) {
   if (!req.decoded.admin) res.status(403).json(util.successFalse(null, 'Not a Admin'));
-  else db.User.findOne({ where: { user_id: req.decoded.id, admin: 1 } })
-    .then(function (user) {
-      if (!user) res.status(403).json(util.successFalse(null, 'Can\'t find admin'));
-      else if (!req.decoded || user.user_id !== req.decoded.id) {
-        res.status(403).json(util.successFalse(null, 'You don\'t have permission'));
-      }
-      else next();
-    }).catch(function (err) {
-      res.status(403).json(util.successFalse(err));
-    });
+  else {
+    db.User.findOne({ where: { user_id: req.decoded.id, admin: 1 } })
+      .then(function (user) {
+        if (!user) res.status(403).json(util.successFalse(null, 'Can\'t find admin'));
+        else if (!req.decoded || user.user_id !== req.decoded.id) {
+          res.status(403).json(util.successFalse(null, 'You don\'t have permission'));
+        } else next();
+      }).catch(function (err) {
+        res.status(403).json(util.successFalse(err));
+      }); 
+  }
 };
 
 module.exports = util;

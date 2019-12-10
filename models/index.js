@@ -23,17 +23,6 @@ fs.readdirSync(__dirname)
     db[model.name] = model;
   });
 
-// sequelize.sync()
-//     .then(() => {
-//     console.log('✓ DB connection success.');
-//     console.log('  Press CTRL-C to stop\n');
-//     })
-//     .catch(err => {
-//     console.error(err);
-//     console.log('✗ DB connection error. Please make sure DB is running.');
-//     process.exit();
-//     });
-
 db.Refugee.hasMany(db.VisitLog, { foreignKey: 'id' });
 db.VisitLog.belongsTo(db.Refugee, { foreignKey: 'refugee_id' });
 

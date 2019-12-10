@@ -22,7 +22,7 @@ router.post('/signup', util.isLoggedin, util.isAdmin, function (req, res) {
         name: data.name,
         email: data.email,
         salt: salt,
-        admin: data.is_admin,
+        admin: data.admin,
         hashed_password: hashedPw,
         createdAt: new Date(),
         updatedAt: null
@@ -58,7 +58,6 @@ router.post('/login', function (req, res, next) {
   })(req, res, next);
 });
 
-// 토큰 refresh
 router.get('/refresh', util.isLoggedin, function (req, res) {
   db.User.findOne({ where: { user_id: req.decoded.id } }).then(function (user) {
     if (!user) {
