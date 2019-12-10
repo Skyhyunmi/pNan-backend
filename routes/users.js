@@ -69,7 +69,7 @@ router.put('/:id', util.isLoggedin, util.isAdmin, async function (req, res) {
       },
       returning: true
     });
-    if (!result[0]) {
+    if (!result[1]) {
       return res.status(400).json(util.successFalse('no column effected'));
     }
   } catch (err) {
