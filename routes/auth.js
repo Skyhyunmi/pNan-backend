@@ -30,9 +30,9 @@ router.post('/signup', util.isLoggedin, util.isAdmin, function (req, res) {
         res.json(results);
       }).catch(function (err) {
         if (err.errors[0].path === 'user_id') {
-          res.status(404).json(util.successFalse(err, '아이디 중복'));
+          res.status(403).json(util.successFalse(err, 'ID duplicated.'));
         } else {
-          res.status(404).json(util.successFalse(err, '이메일 중복'));
+          res.status(403).json(util.successFalse(err, 'E-mail Duplicated.'));
         }
       });
     });
@@ -40,7 +40,8 @@ router.post('/signup', util.isLoggedin, util.isAdmin, function (req, res) {
 });
 
 router.post('/login', function (req, res, next) {
-  passport.authenticate('local', { session: false }, function (err, user) {
+  passport.authenticate('local', { session: false }, function (err, user, info) {
+    if (info) return res.status(403).json(util.successFalse(null, info.message));
     if (err || !user) {
       return res.status(403).json(util.successFalse(null, 'ID or PW is not valid', user));
     }

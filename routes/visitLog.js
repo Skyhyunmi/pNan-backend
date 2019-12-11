@@ -14,11 +14,6 @@ router.get('/', util.isLoggedin, function (req, res) {
     order: [['updatedAt', 'DESC']]
   };
 
-
-  const where = {};
-  const limit = 10;
-  let offset = 0;
-
   if (params.refugee_id) {
     options.where.refugee_id = params.refugee_id;
   }
