@@ -24,9 +24,9 @@ module.exports = function () {
     db.User.findOne({
       where: { user_id: id }
     }).then(function (user) {
-      if (!user) return done(null, false, { message: '존재하지 않는 아이디입니다' });
+      if (!user) return done(null, false, { message: 'ID is not valid' });
       crypyto.pbkdf2(password, user.salt, 100000, 64, 'sha512', function (err, key) {
-        if (key.toString('base64') === user.hashed_password) { return done(null, user); } else return done(null, false, { message: '비밀번호가 틀렸습니다.' });
+        if (key.toString('base64') === user.hashed_password) { return done(null, user); } else return done(null, false, { message: 'PW is not valid' });
       });
     }).catch(function (err) {
       return done(err);
