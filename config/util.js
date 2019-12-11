@@ -17,7 +17,7 @@ util.successFalse = function (err, message, data) {
   return {
     success: false,
     message: message,
-    errors: err? err: null,
+    errors: err || null,
     data: data
   };
 };

@@ -4,34 +4,98 @@ const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const LocalStrategy = require('passport-local').Strategy;
 const db = require('../models/index');
-const crypyto = require('crypto');
+const crypto = require('crypto');
 
 module.exports = function () {
-  passport.serializeUser(function (user, done) {
-    done(null, user);
-  });
+  passport.use(
+    'signup',
+    new LocalStrategy({
+      usernameField: 'id',
+      passwordField: 'pw',
+      session: false,
+      passReqToCallback: true
+    },
+    function (req, id, password, done) {
+      try {
+        db.User.findOne({
+          where: {
+            user_id: id
+          }
+        }).then(function (user) {
+          const data = req.body;
+          if (user) {
+            return done(null, false, { message: 'User already exist.' });
+          }
+          db.User.findOne({
+            where: {
+              email: data.email
+            }
+          }).then(function (user) {
+            if (user) {
+              return done(null, false, { message: 'E-mail duplicated.' });
+            }
+            const buffer = crypto.randomBytes(64);
+            const salt = buffer.toString('base64');
+            const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
+            const hashedPw = key.toString('base64');
+            db.User.create({
+              user_id: id,
+              name: data.name,
+              email: data.email,
+              salt: salt,
+              admin: data.is_admin,
+              hashed_password: hashedPw,
+              createdAt: new Date(),
+              updatedAt: null
+            }).then(function (result) {
+              done(null, result);
+            }).catch(function (err) {
+              done(err);
+            });
+          });
+        });
+      } catch (err) {
+        done(err);
+      }
+    }
+    )
+  );
 
-  passport.deserializeUser(function (user, done) {
-    done(null, user);
-  });
-
-  passport.use('local', new LocalStrategy({
-    usernameField: 'id',
-    passwordField: 'pw',
-    session: false,
-    passReqToCallback: false
-  }, function (id, password, done) {
-    db.User.findOne({
-      where: { user_id: id }
-    }).then(function (user) {
-      if (!user) return done(null, false, { message: 'ID is not valid' });
-      crypyto.pbkdf2(password, user.salt, 100000, 64, 'sha512', function (err, key) {
-        if (key.toString('base64') === user.hashed_password) { return done(null, user); } else return done(null, false, { message: 'PW is not valid' });
-      });
-    }).catch(function (err) {
-      return done(err);
-    });
-  }));
+  passport.use(
+    'login',
+    new LocalStrategy({
+      usernameField: 'id',
+      passwordField: 'pw',
+      session: false
+    },
+    function (id, password, done) {
+      try {
+        db.User.findOne({
+          where: {
+            user_id: id
+          }
+        }).then(function (user) {
+          if (user) {
+            crypto.pbkdf2(password, user.salt, 100000, 64, 'sha512', function (err, key) {
+              if (err) {
+                done(null, false, { message: 'error' });
+              }
+              if (user.hashed_password === key.toString('base64')) {
+                return done(null, user);
+              } else {
+                return done(null, false, { message: 'Password do not match.' });
+              }
+            });
+          } else {
+            return done(null, false, { message: 'ID do not match' });
+          }
+        });
+      } catch (err) {
+        done(err);
+      }
+    }
+    )
+  );
 
   passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
