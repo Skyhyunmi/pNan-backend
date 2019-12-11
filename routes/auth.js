@@ -40,6 +40,7 @@ require('dotenv').config();
 // });
 
 router.post('/signup', util.isLoggedin, util.isAdmin, function (req, res) {
+  req.query = null;
   passport.authenticate('register', function (err, user, info) {
     if (err) {
       return res.status(403).json(util.successFalse(err));

@@ -32,7 +32,7 @@ module.exports = function () {
             }
           }).then(function (user) {
             if (user) {
-              return done(null, false, { message: 'user already taken.' });
+              return done(null, false, { message: 'user already exist.' });
             } else {
               const salt = buf.toString('base64');
               crypto.pbkdf2(password, salt, 100000, 64, 'sha512', function (err, key) {
@@ -46,13 +46,9 @@ module.exports = function () {
                   createdAt: new Date(),
                   updatedAt: null
                 }).then(function (result) {
-                  res.json(result);
+                  done(null, result);
                 }).catch(function (err) {
-                  if (err.errors[0].path === 'user_id') {
-                    res.status(404).json(util.successFalse(err, '아이디 중복'));
-                  } else {
-                    res.status(404).json(util.successFalse(err, '이메일 중복'));
-                  }
+                  done(err);
                 });
               });
             }
