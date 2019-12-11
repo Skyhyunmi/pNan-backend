@@ -62,7 +62,8 @@ router.post('/signup', util.isLoggedin, util.isAdmin, function (req, res) {
 })
 
 router.post('/login', function (req, res, next) {
-  passport.authenticate('local', { session: false }, function (err, user) {
+  passport.authenticate('login', { session: false }, function (err, user,info) {
+    console.log(info);
     if (err || !user) {
       return res.status(403).json(util.successFalse(null, 'ID or PW is not valid', user));
     }
