@@ -30,28 +30,26 @@ module.exports = function () {
             where: {
               user_id: id
             }
-          }).then(function (user) {
+          }).then(async function (user) {
             if (user) {
               return done(null, false, { message: 'user already exist.' });
-            } else {
-              const salt = buf.toString('base64');
-              crypto.pbkdf2(password, salt, 100000, 64, 'sha512', function (err, key) {
-                db.User.create({
-                  user_id: id,
-                  name: data.name,
-                  email: data.email,
-                  salt: salt,
-                  admin: data.is_admin,
-                  hashed_password: key.toString('base64'),
-                  createdAt: new Date(),
-                  updatedAt: null
-                }).then(function (result) {
-                  done(null, result);
-                }).catch(function (err) {
-                  done(err);
-                });
-              });
             }
+            const salt = await crypto.randomBytes(64);
+            const key = await crypto.pbkdf2(password, salt, 100000, 64, 'sha512');
+            db.User.create({
+              user_id: id,
+              name: data.name,
+              email: data.email,
+              salt: salt,
+              admin: data.is_admin,
+              hashed_password: key.toString('base64'),
+              createdAt: new Date(),
+              updatedAt: null
+            }).then(function (result) {
+              done(null, result);
+            }).catch(function (err) {
+              done(err);
+            });
           })
         } catch (err) {
           done(err);
